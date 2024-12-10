@@ -17,6 +17,12 @@ app.use(session({
     saveUninitialized: false,
 }));
 
+// Redirect root URL to login
+app.get('/', (req, res) => {
+    res.redirect('/login');
+});
+
+
 // Use routes
 app.use(authRoutes); // Auth routes
 app.use(taskRoutes); // Task routes
