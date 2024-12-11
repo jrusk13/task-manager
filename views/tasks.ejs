@@ -34,6 +34,8 @@
                     <th>Title</th>
                     <th>Project</th>
                     <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Last Updated</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -44,8 +46,11 @@
                         <td><%= task.title %></td>
                         <td><%= projects.find(p => p.id === task.projectId)?.name || 'N/A' %></td>
                         <td><%= task.status %></td>
+                        <td><%= task.dueDate || 'No due date' %></td>
+                        <td><%= task.updatedAt ? new Date(task.updatedAt).toLocaleString() : 'N/A' %></td>
                         <td>
-                        <a href="/tasks/delete/<%= task.id %>" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="/tasks/manage/<%= task.id %>" class="btn btn-info btn-sm">Manage</a>
+                            <a href="/tasks/delete/<%= task.id %>" class="btn btn-danger btn-sm">Delete</a>
                         </td>
                     </tr>
                 <% }); %>

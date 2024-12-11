@@ -70,3 +70,8 @@ button:hover {
     background-color: #0056b3;
 }
 
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
