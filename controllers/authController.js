@@ -11,12 +11,13 @@ const login = async (req, res) => {
     const { username, password } = req.body;
     const user = findUser(username);
 
-    if (user && await bcrypt.compare(password, user.password)) {
-        req.session.user = username; // Store user in session
-        res.redirect('/tasks'); // Redirect to tasks
-    } else {
-        res.render('login', { error: 'Invalid username or password' });
-    }
+  
+if (user && await bcrypt.compare(password, user.password)) {
+    req.session.user = username; // Store username in session
+    res.redirect('/dashboard'); // Redirect to dashboard
+} else {
+    res.render('login', { error: 'Invalid username or password' });
+}
 };
 
 // Handle logout
