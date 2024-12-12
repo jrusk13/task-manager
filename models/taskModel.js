@@ -15,6 +15,8 @@ const addTask = (task) => {
     task.id = uuidv4(); // Generate a unique ID for the task
     task.createdAt = new Date().toISOString(); // Set creation timestamp
     task.updatedAt = new Date().toISOString(); // Set updated timestamp
+    task.assignedTo = task.assignedTo || null; // Optional: User the task is assigned to
+    task.author = task.author || null; // Optional: User who created the task
     tasks.push(task); // Add the task to the array
     fs.writeFileSync(tasksFile, JSON.stringify(tasks, null, 2)); // Save updated tasks to the file
     return task; // Return the new task

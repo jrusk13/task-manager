@@ -19,5 +19,5 @@ const findUser = (username) => {
     return users.find((user) => user.username === username);
 };
 
-module.exports = { addUser, findUser };
+module.exports = { addUser, findUser, getUsers };
 

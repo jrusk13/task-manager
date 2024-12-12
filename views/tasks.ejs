@@ -1,84 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css">
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-            deleteButtons.forEach((button) => {
-                button.addEventListener('click', (e) => {
-                    if (!confirm('Are you sure you want to delete this task?')) {
-                        e.preventDefault(); // Cancel the action if user clicks "Cancel"
-                    }
-                });
-            });
-        });
-    </script>
-    <title>Task Manager</title>
-</head>
-<body>
-    <div class="container mt-4">
-        <h1 class="text-primary">Welcome, <%= user %>!</h1>
-        <h1 class="text-primary">Task Manager</h1>
-        <div class="text-end mb-4">
-            <a href="/logout" class="btn btn-warning">Logout</a>
-        </div>
-        <h2 class="text-secondary mt-4">Tasks</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    
-                    <th>Title</th>
-                    <th>Project</th>
-                    <th>Status</th>
-                    <th>Due Date</th>
-                    <th>Last Updated</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% tasks.forEach(task => { %>
-                    <tr>
-                     
-                        <td><%= task.title %></td>
-                        <td><%= projects.find(p => p.id === task.projectId)?.name || 'N/A' %></td>
-                        <td><%= task.status %></td>
-                        <td><%= task.dueDate || 'No due date' %></td>
-                        <td><%= task.updatedAt ? new Date(task.updatedAt).toLocaleString() : 'N/A' %></td>
-                        <td>
-                            <a href="/tasks/manage/<%= task.id %>" class="btn btn-info btn-sm">Manage</a>
-                            <a href="/tasks/delete/<%= task.id %>" class="btn btn-danger btn-sm">Delete</a>
-                        </td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
+<%- include('partials/header', { pageTitle: 'Task List', user }) %>
 
-        <h2 class="text-secondary mt-5">Add Task</h2>
-        <form action="/tasks" method="POST" class="form-group">
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" class="form-control" required>
-            
-            <label for="projectId">Project:</label>
-            <select id="projectId" name="projectId" class="form-control">
-                <% projects.forEach(project => { %>
-                    <option value="<%= project.id %>"><%= project.name %></option>
-                <% }); %>
-            </select>
-            
-            <label for="status">Status:</label>
-            <select id="status" name="status" class="form-control">
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-            </select>
-
-            <button type="submit" class="btn btn-primary mt-3">Add Task</button>
-        </form>
+<div class="container mt-4">
+    <h1 class="text-primary">Task Manager</h1>
+    <div class="text-end mb-4">
+        <a href="/logout" class="btn btn-warning">Logout</a>
     </div>
-</body>
-</html>
+    <h2 class="text-secondary mt-4">Tasks</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Project</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Assigned To</th>
+                <th>Author</th>
+                <th>Last Updated</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% tasks.forEach(task => { %>
+                <tr>
+                    <td><%= task.title %></td>
+                    <td><%= projects.find(p => p.id === task.projectId)?.name || 'N/A' %></td>
+                    <td><%= task.status %></td>
+                    <td><%= task.dueDate || 'No due date' %></td>
+                    <td><%= task.assignedTo %></td>
+                    <td><%= task.author %></td>
+                    <td><%= task.updatedAt ? new Date(task.updatedAt).toLocaleString() : 'N/A' %></td>
+                    <td>
+                        <a href="/tasks/manage/<%= task.id %>" class="btn btn-info btn-sm">Manage</a>
+                        <a href="/tasks/delete/<%= task.id %>" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
 
+    <h2 class="text-secondary mt-5">Add Task</h2>
+    <form action="/tasks" method="POST" class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" class="form-control" required>
+        
+        <label for="projectId">Project:</label>
+        <select id="projectId" name="projectId" class="form-control">
+            <% projects.forEach(project => { %>
+                <option value="<%= project.id %>"><%= project.name %></option>
+            <% }); %>
+        </select>
+        
+        <label for="status">Status:</label>
+        <select id="status" name="status" class="form-control">
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+        </select>
+
+        <label for="assignedTo" class="form-label">Assign To</label>
+        <select id="assignedTo" name="assignedTo" class="form-control">
+            <option value="">Unassigned</option>
+            <% users.forEach(user => { %>
+                <option value="<%= user.username %>"><%= user.username %></option>
+            <% }); %>
+        </select>
+
+        <button type="submit" class="btn btn-primary mt-3">Add Task</button>
+    </form>
+</div>
+<%- include('partials/footer') %>
