@@ -1,11 +1,14 @@
 <%- include('partials/header', { pageTitle: 'Task List', user }) %>
 
 <div class="container mt-4">
-    <h1 class="text-primary">Task Manager</h1>
+    <h1 class="text-primary">Tasks</h1>
     <div class="text-end mb-4">
-        <a href="/logout" class="btn btn-warning">Logout</a>
+        <% if (userType === 'admin') { %>
+            <span class="badge bg-info text-dark">Admin</span>
+        <% } %>
+        <a href="/tasks/add" class="btn btn-primary">Add Task</a>
+        <a href="/logout" class="btn btn-danger">Logout</a>
     </div>
-    <h2 class="text-secondary mt-4">Tasks</h2>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -15,7 +18,6 @@
                 <th>Due Date</th>
                 <th>Assigned To</th>
                 <th>Author</th>
-                <th>Last Updated</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,12 +25,11 @@
             <% tasks.forEach(task => { %>
                 <tr>
                     <td><%= task.title %></td>
-                    <td><%= projects.find(p => p.id === task.projectId)?.name || 'N/A' %></td>
+                    <td><%= task.projectName %></td>
                     <td><%= task.status %></td>
-                    <td><%= task.dueDate || 'No due date' %></td>
-                    <td><%= task.assignedTo %></td>
-                    <td><%= task.author %></td>
-                    <td><%= task.updatedAt ? new Date(task.updatedAt).toLocaleString() : 'N/A' %></td>
+                    <td><%= task.dueDate || 'No Due Date' %></td>
+                    <td><%= task.assignedToName %></td>
+                    <td><%= task.authorName %></td>
                     <td>
                         <a href="/tasks/manage/<%= task.id %>" class="btn btn-info btn-sm">Manage</a>
                         <a href="/tasks/delete/<%= task.id %>" class="btn btn-danger btn-sm">Delete</a>
@@ -37,35 +38,5 @@
             <% }); %>
         </tbody>
     </table>
-
-    <h2 class="text-secondary mt-5">Add Task</h2>
-    <form action="/tasks" method="POST" class="form-group">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" class="form-control" required>
-        
-        <label for="projectId">Project:</label>
-        <select id="projectId" name="projectId" class="form-control">
-            <% projects.forEach(project => { %>
-                <option value="<%= project.id %>"><%= project.name %></option>
-            <% }); %>
-        </select>
-        
-        <label for="status">Status:</label>
-        <select id="status" name="status" class="form-control">
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
-        </select>
-
-        <label for="assignedTo" class="form-label">Assign To</label>
-        <select id="assignedTo" name="assignedTo" class="form-control">
-            <option value="">Unassigned</option>
-            <% users.forEach(user => { %>
-                <option value="<%= user.username %>"><%= user.username %></option>
-            <% }); %>
-        </select>
-
-        <button type="submit" class="btn btn-primary mt-3">Add Task</button>
-    </form>
 </div>
 <%- include('partials/footer') %>

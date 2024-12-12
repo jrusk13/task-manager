@@ -5,27 +5,50 @@ const listTasks = (req, res) => {
     const tasks = getTasks();
     const projects = getProjects();
     const users = getUsers(); // Fetch all users
-    const username = req.session.user; // Get the logged-in username from the session
+    const username = req.session.user; // Get the logged-in user's username
+    const userType = req.session.userType; // Assuming user type is stored in the session
 
-    // Enhance tasks with assignedTo and author details
-    const tasksWithDetails = tasks.map(task => ({
+    if (!username) {
+        return res.redirect('/login'); // Redirect to login if no session is found
+    }
+
+    // Filter tasks: Admins see all tasks, others see only their assigned tasks
+    const filteredTasks = userType === 'admin'
+        ? tasks
+        : tasks.filter(task => task.assignedTo === username);
+
+    // Enhance tasks with additional details (e.g., project name, assigned user)
+    const tasksWithDetails = filteredTasks.map(task => ({
         ...task,
-        assignedTo: users.find(user => user.username === task.assignedTo)?.username || 'Unassigned',
-        author: users.find(user => user.username === task.author)?.username || 'Unknown',
+        projectName: projects.find(project => project.id === task.projectId)?.name || 'N/A',
+        assignedToName: users.find(user => user.username === task.assignedTo)?.username || 'Unassigned',
+        authorName: users.find(user => user.username === task.author)?.username || 'Unknown',
     }));
 
-    res.render('tasks', { tasks: tasksWithDetails, projects,users, user: username });
+    res.render('tasks', { tasks: tasksWithDetails, projects, user: username, userType });
 };
 
 // Add a new task
 const createTask = (req, res) => {
-    const { title, projectId, status, dueDate } = req.body;
+    const { title, projectId, status, dueDate, assignedTo, author } = req.body;
     const newTask = addTask({ title, projectId: parseInt(projectId), status , dueDate, assignedTo: assignedTo || null, author, // Automatically assign the logged-in user as the author 
         });
     res.redirect('/tasks'); // Redirect to task list after adding
 };
 
-module.exports = { listTasks, createTask };
+// Render the Add Task page
+const renderAddTaskPage = (req, res) => {
+    const projects = getProjects();
+    const users = getUsers();
+    const username = req.session.user;
+
+    if (!username) {
+        return res.redirect('/login');
+    }
+
+    res.render('add-task', { projects, users, user: username });
+};
+
 
 // Delete a task
 const { deleteTask } = require('../models/taskModel');
@@ -63,14 +86,16 @@ const renderDashboard = (req, res) => {
     const projects = getProjects();
     const username = req.session.user; // Get the username from the session
 
-if (!username) {
-    return res.redirect('/login'); // Redirect to login if the session is not set
-}
+    if (!username) {
+        return res.redirect('/login'); // Redirect to login if the session is not set
+    }
 
+    // Filter tasks assigned to the logged-in user
+    const userTasks = tasks.filter(task => task.assignedTo === username);
 
-    // Group tasks by project and status
+    // Group tasks by project and status for the logged-in user
     const projectStatusCounts = projects.map(project => {
-        const projectTasks = tasks.filter(task => task.projectId === project.id);
+        const projectTasks = userTasks.filter(task => task.projectId === project.id);
         return {
             projectName: project.name,
             Pending: projectTasks.filter(task => task.status === 'Pending').length,
@@ -79,7 +104,10 @@ if (!username) {
         };
     });
 
-    res.render('dashboard', { projectStatusCounts, user:username });
+    // Debugging log to validate data
+    console.log('Project Status Counts:', projectStatusCounts);
+
+    res.render('dashboard', { projectStatusCounts, user: username });
 };
 
 
@@ -109,4 +137,4 @@ const editTask = (req, res) => {
     res.redirect('/tasks'); // Redirect back to the task list
 };
 
-module.exports = { listTasks, createTask, removeTask, manageTask, editTask, renderDashboard };
+module.exports = { listTasks, createTask,renderAddTaskPage, removeTask, manageTask, editTask, renderDashboard };

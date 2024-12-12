@@ -47,5 +47,38 @@
     "id": "a4c06605-487b-4a99-a60b-9975e2e728a4",
     "createdAt": "2024-12-11T15:35:49.093Z",
     "updatedAt": "2024-12-11T15:35:49.093Z"
+  },
+  {
+    "title": "test2222",
+    "projectId": 2,
+    "status": "Completed",
+    "dueDate": "2024-12-12",
+    "assignedTo": "user1",
+    "author": null,
+    "id": "befa3160-7b3b-482b-a5d4-2a0d0fd2da9f",
+    "createdAt": "2024-12-12T16:12:18.216Z",
+    "updatedAt": "2024-12-12T16:12:18.216Z"
+  },
+  {
+    "title": "uhjkbjkhjkhjkhjkhjk",
+    "projectId": 1,
+    "status": "Completed",
+    "dueDate": "2024-12-12",
+    "assignedTo": "srahmani",
+    "author": null,
+    "id": "c4c98cf7-191f-4782-b08d-77160e9227cd",
+    "createdAt": "2024-12-12T16:33:00.565Z",
+    "updatedAt": "2024-12-12T16:33:00.565Z"
+  },
+  {
+    "title": "fdgfsdzgsdgsdgSDGSDgSDgSDg",
+    "projectId": 1,
+    "status": "Completed",
+    "dueDate": "2024-12-11",
+    "assignedTo": "user1",
+    "author": null,
+    "id": "9b142d03-ea25-417e-a7e0-5477e28b8e39",
+    "createdAt": "2024-12-12T16:52:30.717Z",
+    "updatedAt": "2024-12-12T16:52:30.717Z"
   }
 ]

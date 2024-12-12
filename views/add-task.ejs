@@ -1,0 +1,55 @@
+<%- include('partials/header', { pageTitle: 'Add Task', user }) %>
+
+<div class="container mt-5">
+    <h1 class="text-primary">Add New Task</h1>
+    <form action="/tasks" method="POST" class="mt-4">
+        <!-- Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" id="title" name="title" class="form-control" required>
+        </div>
+
+        <!-- Project -->
+        <div class="mb-3">
+            <label for="projectId" class="form-label">Project</label>
+            <select id="projectId" name="projectId" class="form-control">
+                <% projects.forEach(project => { %>
+                    <option value="<%= project.id %>"><%= project.name %></option>
+                <% }); %>
+            </select>
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" name="status" class="form-control">
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+
+        <!-- Due Date -->
+        <div class="mb-3">
+            <label for="dueDate" class="form-label">Due Date</label>
+            <input type="date" id="dueDate" name="dueDate" class="form-control">
+        </div>
+
+        <!-- Assigned To -->
+        <div class="mb-3">
+            <label for="assignedTo" class="form-label">Assign To</label>
+            <select id="assignedTo" name="assignedTo" class="form-control">
+                <option value="">Unassigned</option>
+                <% users.forEach(user => { %>
+                    <option value="<%= user.username %>"><%= user.username %></option>
+                <% }); %>
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Add Task</button>
+    </form>
+    <a href="/tasks" class="btn btn-secondary mt-3">Back to Tasks</a>
+</div>
+
+<%- include('partials/footer') %>

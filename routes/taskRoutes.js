@@ -1,5 +1,5 @@
 const express = require('express');
-const { listTasks, createTask, removeTask, manageTask, editTask, renderDashboard } = require('../controllers/taskController');
+const { listTasks, createTask, removeTask, manageTask, editTask, renderDashboard,renderAddTaskPage } = require('../controllers/taskController');
 const router = express.Router();
 
 // Middleware to protect routes
@@ -14,6 +14,9 @@ const isAuthenticated = (req, res, next) => {
 
 // Dashboard route
 router.get('/dashboard', renderDashboard);
+
+// Route to display the add task page
+router.get('/tasks/add', renderAddTaskPage);
 
 router.get('/tasks', listTasks);
 router.post('/tasks', createTask);
