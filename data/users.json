@@ -1,22 +1,27 @@
 [
   {
     "username": "srahmani",
-    "password": "$2b$10$PmiFe7cdznyMX6yPbbIgneFSJfL62jfBtGV0fuaobR1wzQrv7x9rG"
+    "password": "$2b$10$PmiFe7cdznyMX6yPbbIgneFSJfL62jfBtGV0fuaobR1wzQrv7x9rG",
+    "userType": "admin" 
   },
   {
     "username": "ABD-Staff",
-    "password": "$2b$10$Kw8apRarBiNoi8IAif2UWescHUHx1tCZ2OJyHQAb3TtFhswpywyOu"
+    "password": "$2b$10$Kw8apRarBiNoi8IAif2UWescHUHx1tCZ2OJyHQAb3TtFhswpywyOu",
+    "userType": "admin" 
   },
   {
     "username": "jake",
-    "password": "$2b$10$S/uqQ8YeTD9stGYl.ocRTu4XkW55tPKuujHN2PY6Zf9CHJDOFmlmS"
+    "password": "$2b$10$S/uqQ8YeTD9stGYl.ocRTu4XkW55tPKuujHN2PY6Zf9CHJDOFmlmS",
+    "userType": "admin" 
   },
   {
     "username": "Shawn Rahmani",
-    "password": "$2b$10$wIdYxaenJA7mCmj0NDOwt.o69/oMv51JJspgwy9cYAyhq95K.LNEG"
+    "password": "$2b$10$wIdYxaenJA7mCmj0NDOwt.o69/oMv51JJspgwy9cYAyhq95K.LNEG",
+    "userType": "standard" 
   },
   {
     "username": "user1",
-    "password": "$2b$10$TzuSKlkRZrkPUGWG1TCiaujLDpZGH9SSpWFdTKISiCmINsbgH29w2"
+    "password": "$2b$10$TzuSKlkRZrkPUGWG1TCiaujLDpZGH9SSpWFdTKISiCmINsbgH29w2",
+    "userType": "standard" 
   }
 ]
