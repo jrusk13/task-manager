@@ -1,0 +1,22 @@
+<%- include('partials/header', { pageTitle: 'Add Project', user }) %>
+
+<div class="container mt-5">
+    <h1 class="text-primary">Add Project</h1>
+    <form action="/projects/add" method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">Project Name</label>
+            <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                class="form-control" 
+                placeholder="Enter the project name" 
+                required
+            >
+        </div>
+        <button type="submit" class="btn btn-primary">Add Project</button>
+    </form>
+    <a href="/projects" class="btn btn-secondary mt-3">Back to Projects</a>
+</div>
+
+<%- include('partials/footer') %>

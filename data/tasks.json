@@ -44,10 +44,10 @@
     "status": "Completed",
     "dueDate": "2024-12-12",
     "assignedTo": "srahmani",
-    "author": null,
+    "author": "srahmani",
     "id": "6457e9f5-4304-4dc3-9f4f-bdb68cd3bcb5",
     "createdAt": "2024-12-12T18:42:44.746Z",
-    "updatedAt": "2024-12-12T18:42:44.746Z"
+    "updatedAt": "2024-12-13T21:31:37.276Z"
   },
   {
     "title": "test the system!",
@@ -55,9 +55,20 @@
     "status": "In Progress",
     "dueDate": "2024-12-19",
     "assignedTo": "srahmani",
-    "author": null,
+    "author": "srahmani",
     "id": "81ca6aaa-058c-4c3e-af4e-67d274c69a1d",
     "createdAt": "2024-12-12T21:41:33.285Z",
-    "updatedAt": "2024-12-12T21:41:33.285Z"
+    "updatedAt": "2024-12-13T21:31:34.182Z"
+  },
+  {
+    "title": "test the system",
+    "projectId": 1,
+    "status": "Completed",
+    "dueDate": "2024-12-30",
+    "assignedTo": "srahmani",
+    "author": "srahmani",
+    "id": "718db99a-de03-46c3-88d8-61ce4ceae2f9",
+    "createdAt": "2024-12-13T21:04:35.477Z",
+    "updatedAt": "2024-12-13T21:05:21.695Z"
   }
 ]

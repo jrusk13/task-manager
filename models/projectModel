@@ -1,0 +1,50 @@
+const fs = require('fs');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+
+const projectsFile = path.join(__dirname, '../data/projects.json');
+
+// Helper function to read projects from file
+const readProjectsFromFile = () => {
+    if (!fs.existsSync(projectsFile)) {
+        fs.writeFileSync(projectsFile, JSON.stringify([])); // Initialize the file if it doesn't exist
+    }
+    return JSON.parse(fs.readFileSync(projectsFile, 'utf-8'));
+};
+
+// Helper function to write projects to file
+const writeProjectsToFile = (projects) => {
+    fs.writeFileSync(projectsFile, JSON.stringify(projects, null, 2), 'utf-8');
+};
+
+// Get all projects
+const getProjects = () => {
+    return readProjectsFromFile();
+};
+
+// Add a new project
+const addNewProject = (project) => {
+    const projects = readProjectsFromFile();
+    const newProject = { id: uuidv4(), ...project };
+    projects.push(newProject);
+    writeProjectsToFile(projects);
+};
+
+// Delete a project by ID
+const deleteProjectById = (id) => {
+    let projects = readProjectsFromFile();
+    projects = projects.filter(project => project.id !== id);
+    writeProjectsToFile(projects);
+};
+
+// Update a project by ID
+const updateProjectById = (id, updatedData) => {
+    const projects = readProjectsFromFile();
+    const projectIndex = projects.findIndex(project => project.id === id);
+    if (projectIndex !== -1) {
+        projects[projectIndex] = { ...projects[projectIndex], ...updatedData };
+        writeProjectsToFile(projects);
+    }
+};
+
+module.exports = { getProjects, addNewProject, deleteProjectById, updateProjectById };
