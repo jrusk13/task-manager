@@ -1,5 +1,5 @@
 const express = require('express');
-const { listTasks, createTask, removeTask, manageTask, editTask, renderDashboard,renderAddTaskPage } = require('../controllers/taskController');
+const { listTasks, createTask, removeTask, manageTask, editTask, renderDashboard,renderAddTaskPage, renderReportsPage ,handleQuery, exportQueryResults } = require('../controllers/taskController');
 const router = express.Router();
 
 // Middleware to protect routes
@@ -27,6 +27,14 @@ router.get('/tasks/delete/:id', removeTask); // Add a delete route
 router.get('/tasks/manage/:id', manageTask); // View Task details
 router.post('/tasks/manage/:id', editTask); // Edit Task
 
+// Report page route
+router.get('/reports', renderReportsPage);
+
+// Query endpoint
+router.post('/reports/query', handleQuery);
+
+// Export query results route endpoint
+router.post('/reports/export', exportQueryResults);
 
 module.exports = router;
 

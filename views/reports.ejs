@@ -1,0 +1,80 @@
+<%- include('partials/header', { pageTitle: 'Reports', user }) %>
+
+<div class="container mt-5">
+    <h1 class="text-primary">Query Tool</h1>
+
+    <!-- Query Form -->
+    <form action="/reports/query" method="POST" class="mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="status" class="form-label">Status</label>
+                <select id="status" name="status" class="form-control">
+                    <option value="">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="assignedTo" class="form-label">Assigned To</label>
+                <select id="assignedTo" name="assignedTo" class="form-control">
+                    <option value="">All</option>
+                    <% users.forEach(user => { %>
+                        <option value="<%= user.username %>"><%= user.username %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="projectId" class="form-label">Project</label>
+                <select id="projectId" name="projectId" class="form-control">
+                    <option value="">All</option>
+                    <% projects.forEach(project => { %>
+                        <option value="<%= project.id %>"><%= project.name %></option>
+                    <% }); %>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Query</button>
+    </form>
+
+    <!-- Export Button -->
+    <% if (tasks.length > 0) { %>
+        <form action="/reports/export" method="POST" class="mt-3">
+            <input type="hidden" name="status" value="<%= query.status || '' %>">
+            <input type="hidden" name="assignedTo" value="<%= query.assignedTo || '' %>">
+            <input type="hidden" name="projectId" value="<%= query.projectId || '' %>">
+            <button type="submit" class="btn btn-success">Export to CSV</button>
+        </form>
+    <% } %>
+
+    <!-- Query Results -->
+    <h2 class="text-secondary mt-5">Results</h2>
+    <% if (tasks.length > 0) { %>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Project</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% tasks.forEach(task => { %>
+                    <tr>
+                        <td><%= task.title %></td>
+                        <td><%= task.status %></td>
+                        <td><%= task.assignedTo %></td>
+                        <td><%= projects.find(project => project.id === task.projectId)?.name || 'N/A' %></td>
+                        <td><%= task.dueDate || 'No Due Date' %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p class="text-muted">No results found.</p>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

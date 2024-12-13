@@ -1,23 +1,31 @@
-const { getTasks, getTaskById, updateTask, getProjects, addTask } = require('../models/taskModel');
-const { getUsers } = require('../models/userModel'); // Correct relative path
+const { 
+    getTasks, 
+    getTaskById, 
+    updateTask, 
+    getProjects, 
+    addTask, 
+    deleteTask 
+} = require('../models/taskModel');
+const { getUsers } = require('../models/userModel');
+const { createObjectCsvWriter } = require('csv-writer');
+const path = require('path');
+
 // Get all tasks
 const listTasks = (req, res) => {
     const tasks = getTasks();
     const projects = getProjects();
-    const users = getUsers(); // Fetch all users
-    const username = req.session.user; // Get the logged-in user's username
-    const userType = req.session.userType; // Assuming user type is stored in the session
+    const users = getUsers();
+    const username = req.session.user;
+    const userType = req.session.userType;
 
     if (!username) {
-        return res.redirect('/login'); // Redirect to login if no session is found
+        return res.redirect('/login');
     }
 
-    // Filter tasks: Admins see all tasks, others see only their assigned tasks
-    const filteredTasks = userType === 'admin'
-        ? tasks
+    const filteredTasks = userType === 'admin' 
+        ? tasks 
         : tasks.filter(task => task.assignedTo === username);
 
-    // Enhance tasks with additional details (e.g., project name, assigned user)
     const tasksWithDetails = filteredTasks.map(task => ({
         ...task,
         projectName: projects.find(project => project.id === task.projectId)?.name || 'N/A',
@@ -30,10 +38,19 @@ const listTasks = (req, res) => {
 
 // Add a new task
 const createTask = (req, res) => {
-    const { title, projectId, status, dueDate, assignedTo, author } = req.body;
-    const newTask = addTask({ title, projectId: parseInt(projectId), status , dueDate, assignedTo: assignedTo || null, author, // Automatically assign the logged-in user as the author 
-        });
-    res.redirect('/tasks'); // Redirect to task list after adding
+    const { title, projectId, status, dueDate, assignedTo } = req.body;
+    const author = req.session.user;
+
+    addTask({ 
+        title, 
+        projectId: parseInt(projectId), 
+        status, 
+        dueDate, 
+        assignedTo: assignedTo || null, 
+        author 
+    });
+
+    res.redirect('/tasks');
 };
 
 // Render the Add Task page
@@ -49,51 +66,65 @@ const renderAddTaskPage = (req, res) => {
     res.render('add-task', { projects, users, user: username });
 };
 
-
 // Delete a task
-const { deleteTask } = require('../models/taskModel');
 const removeTask = (req, res) => {
-    const id = req.params.id; // GUIDs are strings
-    deleteTask(id); // Call the model's delete function
-    res.redirect('/tasks'); // Redirect back to the task list
+    const id = req.params.id;
+    deleteTask(id);
+    res.redirect('/tasks');
 };
-
-module.exports = { listTasks, createTask, removeTask };
-
 
 // Render the Manage Task page
 const manageTask = (req, res) => {
     const { id } = req.params;
     const task = getTaskById(id);
     const projects = getProjects();
-    const users = getUsers(); // Fetch all users
-    const username = req.session.user; // Get the logged-in user's name
+    const users = getUsers();
+    const username = req.session.user;
 
     if (!task) {
         return res.status(404).send('Task not found');
     }
 
-    res.render('manage-task', { task, projects, users , user: username });
+    res.render('manage-task', { task, projects, users, user: username });
 };
 
+// Handle Task Updates
+const editTask = (req, res) => {
+    const { id } = req.params;
+    const { title, projectId, status, dueDate, assignedTo } = req.body;
+    const author = req.session.user;
 
+    const updatedTask = {
+        title,
+        projectId: parseInt(projectId),
+        status,
+        dueDate: dueDate || null,
+        assignedTo: assignedTo || null,
+        author: author || null,
+        updatedAt: new Date().toISOString(),
+    };
 
+    const success = updateTask(id, updatedTask);
 
+    if (!success) {
+        return res.status(404).send('Task not found');
+    }
 
-// Render Dashboard
+    res.redirect('/tasks');
+};
+
+// Render the Dashboard
 const renderDashboard = (req, res) => {
     const tasks = getTasks();
     const projects = getProjects();
-    const username = req.session.user; // Get the username from the session
+    const username = req.session.user;
 
     if (!username) {
-        return res.redirect('/login'); // Redirect to login if the session is not set
+        return res.redirect('/login');
     }
 
-    // Filter tasks assigned to the logged-in user
     const userTasks = tasks.filter(task => task.assignedTo === username);
 
-    // Group tasks by project and status for the logged-in user
     const projectStatusCounts = projects.map(project => {
         const projectTasks = userTasks.filter(task => task.projectId === project.id);
         return {
@@ -104,37 +135,109 @@ const renderDashboard = (req, res) => {
         };
     });
 
-    // Debugging log to validate data
-    console.log('Project Status Counts:', projectStatusCounts);
-
     res.render('dashboard', { projectStatusCounts, user: username });
 };
 
+// Render the Reports Page
+const renderReportsPage = (req, res) => {
+    const projects = getProjects();
+    const users = getUsers();
+    const username = req.session.user;
 
-// Handle Task Updates
-const editTask = (req, res) => {
-    const { id } = req.params;
-    const { title, projectId, status, dueDate, assignedTo, author } = req.body;
-
-    // Prepare updated task object
-    const updatedTask = {
-        title,
-        projectId: parseInt(projectId), // Ensure projectId is an integer
-        status,
-        dueDate: dueDate || null, // Default to null if not provided
-        assignedTo: assignedTo || null, // Default to null if not provided
-        author: author || null, // Default to null if not provided
-        updatedAt: new Date().toISOString(), // Update timestamp
-    };
-
-    // Update the task in the data store
-    const success = updateTask(id, updatedTask);
-
-    if (!success) {
-        return res.status(404).send('Task not found');
+    if (!username) {
+        return res.redirect('/login');
     }
 
-    res.redirect('/tasks'); // Redirect back to the task list
+    res.render('reports', { projects, users, user: username, tasks: [] });
 };
 
-module.exports = { listTasks, createTask,renderAddTaskPage, removeTask, manageTask, editTask, renderDashboard };
+// Handle Query for Reports
+const handleQuery = (req, res) => {
+    const { status, assignedTo, projectId } = req.body;
+    const tasks = getTasks();
+
+    // Filter tasks based on query criteria
+    const filteredTasks = tasks.filter(task => {
+        return (
+            (!status || task.status === status) &&
+            (!assignedTo || task.assignedTo === assignedTo) &&
+            (!projectId || task.projectId === parseInt(projectId))
+        );
+    });
+
+    const projects = getProjects();
+    const users = getUsers();
+    const username = req.session.user;
+
+    // Pass query parameters explicitly to the view
+    res.render('reports', { 
+        projects, 
+        users, 
+        user: username, 
+        tasks: filteredTasks, 
+        query: { status, assignedTo, projectId } 
+    });
+};
+
+
+// Export Query Results to CSV
+const exportQueryResults = (req, res) => {
+    const { status, assignedTo, projectId } = req.body;
+    const tasks = getTasks();
+    const projects = getProjects();
+
+    const filteredTasks = tasks.filter(task => {
+        return (
+            (!status || task.status === status) &&
+            (!assignedTo || task.assignedTo === assignedTo) &&
+            (!projectId || task.projectId === parseInt(projectId))
+        );
+    });
+
+    const csvWriter = createObjectCsvWriter({
+        path: path.join(__dirname, '../exports/query_results.csv'),
+        header: [
+            { id: 'title', title: 'Title' },
+            { id: 'status', title: 'Status' },
+            { id: 'assignedTo', title: 'Assigned To' },
+            { id: 'projectName', title: 'Project' },
+            { id: 'dueDate', title: 'Due Date' },
+        ],
+    });
+
+    const records = filteredTasks.map(task => ({
+        title: task.title,
+        status: task.status,
+        assignedTo: task.assignedTo || 'Unassigned',
+        projectName: projects.find(project => project.id === task.projectId)?.name || 'N/A',
+        dueDate: task.dueDate || 'No Due Date',
+    }));
+
+    csvWriter
+        .writeRecords(records)
+        .then(() => {
+            res.download(path.join(__dirname, '../exports/query_results.csv'), 'query_results.csv', err => {
+                if (err) {
+                    res.status(500).send('Error exporting the file.');
+                }
+            });
+        })
+        .catch(err => {
+            console.error('Error writing CSV:', err);
+            res.status(500).send('Error generating the CSV file.');
+        });
+};
+
+// Export all functions
+module.exports = { 
+    listTasks, 
+    createTask, 
+    renderAddTaskPage, 
+    removeTask, 
+    manageTask, 
+    editTask, 
+    renderDashboard, 
+    renderReportsPage, 
+    handleQuery, 
+    exportQueryResults 
+};
