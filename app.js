@@ -3,7 +3,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
-
+const projectRoutes = require('./routes/projectRoutes'); // Import projectRoutes
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 // Use routes
 app.use(authRoutes); // Auth routes
 app.use(taskRoutes); // Task routes
+app.use(projectRoutes); //Project routes
 
 app.listen(3500, () => {
     console.log('Server running on http://localhost:3500');
