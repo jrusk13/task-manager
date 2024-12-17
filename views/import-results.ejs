@@ -1,0 +1,29 @@
+<%- include('partials/header', { pageTitle: 'Import Results', user }) %>
+
+<div class="container mt-5">
+    <h1 class="text-primary">Import Results</h1>
+
+    <% if (errors.length > 0) { %>
+        <div class="alert alert-danger">
+            <h4>Errors</h4>
+            <ul>
+                <% errors.forEach(error => { %>
+                    <li><%= error %></li>
+                <% }); %>
+            </ul>
+        </div>
+    <% } %>
+
+    <% if (results.length > 0) { %>
+        <div class="alert alert-success">
+            <h4>Tasks Imported Successfully</h4>
+            <ul>
+                <% results.forEach(task => { %>
+                    <li>Task: <%= task.title %>, Project ID: <%= task.projectId %></li>
+                <% }); %>
+            </ul>
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

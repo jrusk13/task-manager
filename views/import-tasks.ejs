@@ -1,0 +1,92 @@
+<%- include('partials/header', { pageTitle: 'Import Tasks', user }) %>
+
+<div class="container mt-5">
+    <h1 class="text-primary">Import Tasks</h1>
+    <form id="fileUploadForm" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="file" class="form-label">Upload CSV File</label>
+            <input type="file" id="file" name="file" class="form-control" accept=".csv" required>
+        </div>
+        <button type="button" id="previewFile" class="btn btn-primary">Preview File</button>
+    </form>
+
+    <div id="mappingSection" class="mt-5" style="display: none;">
+        <h3 class="text-secondary">Field Mapping</h3>
+        <p>Map the columns in your file to the required task fields:</p>
+        <form id="mappingForm" action="/tasks/import" method="POST">
+            <div class="row mb-3">
+                <label class="col-md-3">Task Title</label>
+                <div class="col-md-6">
+                    <select id="titleMapping" name="title" class="form-select">
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3">Task Status</label>
+                <div class="col-md-6">
+                    <select id="statusMapping" name="status" class="form-select">
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3">Due Date</label>
+                <div class="col-md-6">
+                    <select id="dueDateMapping" name="dueDate" class="form-select">
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3">Project Name</label>
+                <div class="col-md-6">
+                    <select id="projectNameMapping" name="projectName" class="form-select">
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">Import Tasks</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('previewFile').addEventListener('click', () => {
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please select a file to preview.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const csvText = e.target.result;
+
+            // Extract the header row
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
+            const headers = lines[0].split(',');
+
+            // Populate dropdowns dynamically
+            const fields = ['titleMapping', 'statusMapping', 'dueDateMapping', 'projectNameMapping'];
+            fields.forEach(field => {
+                const select = document.getElementById(field);
+                select.innerHTML = '<option value="">-- Select Column --</option>';
+                headers.forEach(header => {
+                    const option = document.createElement('option');
+                    option.value = header.trim();
+                    option.textContent = header.trim();
+                    select.appendChild(option);
+                });
+            });
+
+            // Show mapping section
+            document.getElementById('mappingSection').style.display = 'block';
+        };
+        reader.readAsText(file);
+    });
+</script>
+
+<%- include('partials/footer') %>

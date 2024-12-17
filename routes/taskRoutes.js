@@ -1,7 +1,8 @@
 const express = require('express');
 const { listTasks, createTask, removeTask, manageTask, editTask, renderDashboard,renderAddTaskPage, renderReportsPage ,handleQuery, exportQueryResults } = require('../controllers/taskController');
 const router = express.Router();
-
+const multer = require('multer');
+const { renderImportPage, handleImport } = require('../controllers/importController');
 // Middleware to protect routes
 const isAuthenticated = (req, res, next) => {
     if (req.session.user) {
@@ -35,6 +36,15 @@ router.post('/reports/query', handleQuery);
 
 // Export query results route endpoint
 router.post('/reports/export', exportQueryResults);
+
+// Configure multer
+const upload = multer({ dest: 'uploads/' });
+
+// Render the Import Tasks page
+router.get('/tasks/import', renderImportPage);
+
+// Handle the file upload and import logic
+router.post('/tasks/import', upload.single('file'), handleImport);
 
 module.exports = router;
 
