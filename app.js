@@ -5,6 +5,8 @@ const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const projectRoutes = require('./routes/projectRoutes'); // Import projectRoutes
 const app = express();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -16,6 +18,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
 }));
+
+// import
+app.use(upload.single('file'));
 
 // Redirect root URL to login
 app.get('/', (req, res) => {
